@@ -4,8 +4,8 @@ import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 
 // https://vite.dev/config/
-export default defineConfig({
-  base: './',
+export default {
+  base: '/pe-ratio-analysis/',
   plugins: [react(),tailwindcss()],
   resolve: {
     alias: {
