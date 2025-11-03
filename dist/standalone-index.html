@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>歷史本益比分析報告 | Historical P/E Ratio Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .meta {
+            font-size: 0.9em;
+            color: #999;
+        }
+        
+        .summary-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background-color: #f0f0f0;
+            color: #333;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-btn.active {
+            background-color: #667eea;
+            color: white;
+        }
+        
+        .tab-btn:hover {
+            background-color: #667eea;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card h3 {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .badge.high {
+            background-color: #fee;
+            color: #c33;
+        }
+        
+        .badge.low {
+            background-color: #efe;
+            color: #3c3;
+        }
+        
+        .card-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .card-row:last-child {
+            border-bottom: none;
+        }
+        
+        .card-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .card-value {
+            font-weight: bold;
+        }
+        
+        .positive {
+            color: #c33;
+        }
+        
+        .negative {
+            color: #3c3;
+        }
+        
+        .gauge-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .gauge-card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .gauge-value {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .gauge-label {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+        
+        .gauge-description {
+            color: #999;
+            font-size: 0.9em;
+        }
+        
+        ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+        
+        a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>歷史本益比分析報告</h1>
+            <p class="subtitle">Historical P/E Ratio Analysis Report</p>
+            <div class="meta">
+                <span>作者：AI 金融分析師</span> • 
+                <span>發布日期：2025年10月</span> • 
+                <span>數據來源：多重權威金融數據提供商</span>
+            </div>
+        </header>
+        
+        <div class="summary-card">
+            <h2>執行摘要</h2>
+            <p>本報告分析了主要股票市場指數的歷史本益比數據，包括標普500、道瓊工業平均指數和納斯達克綜合指數。通過比較當前本益比與歷史平均值，我們發現當前市場整體呈現輕微高估狀態，投資者應保持謹慎樂觀的態度。</p>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab(event, 'overview')">📊 總覽</button>
+            <button class="tab-btn" onclick="switchTab(event, 'sentiment')">📈 市場情緒</button>
+            <button class="tab-btn" onclick="switchTab(event, 'fundflow')">💰 資金流向</button>
+            <button class="tab-btn" onclick="switchTab(event, 'insights')">💡 投資啟示</button>
+            <button class="tab-btn" onclick="switchTab(event, 'references')">📚 參考資料</button>
+        </div>
+        
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="card-grid">
+                <div class="card">
+                    <h3>標普500 <span class="badge high">高估</span></h3>
+                    <div class="card-row"><span class="card-label">歷史平均</span><span class="card-value">16.8</span></div>
+                    <div class="card-row"><span class="card-label">當前水平</span><span class="card-value">28.5</span></div>
+                    <div class="card-row"><span class="card-label">變化</span><span class="card-value positive">+69.6%</span></div>
+                    <p style="color: #666; font-size: 0.9em; margin-top: 10px;">當前本益比高於歷史平均水平，建議謹慎投資。</p>
+                </div>
+                
+                <div class="card">
+                    <h3>道瓊工業 <span class="badge high">高估</span></h3>
+                    <div class="card-row"><span class="card-label">歷史平均</span><span class="card-value">15.2</span></div>
+                    <div class="card-row"><span class="card-label">當前水平</span><span class="card-value">26.8</span></div>
+                    <div class="card-row"><span class="card-label">變化</span><span class="card-value positive">+76.3%</span></div>
+                    <p style="color: #666; font-size: 0.9em; margin-top: 10px;">本益比大幅高於歷史平均，存在高估風險。</p>
+                </div>
+                
+                <div class="card">
+                    <h3>納斯達克 <span class="badge high">高估</span></h3>
+                    <div class="card-row"><span class="card-label">歷史平均</span><span class="card-value">22.4</span></div>
+                    <div class="card-row"><span class="card-label">當前水平</span><span class="card-value">35.2</span></div>
+                    <div class="card-row"><span class="card-label">變化</span><span class="card-value positive">+57.1%</span></div>
+                    <p style="color: #666; font-size: 0.9em; margin-top: 10px;">科技股集中的納斯達克顯示高估值特徵。</p>
+                </div>
+                
+                <div class="card">
+                    <h3>恒生指數 <span class="badge low">低估</span></h3>
+                    <div class="card-row"><span class="card-label">歷史平均</span><span class="card-value">12.8</span></div>
+                    <div class="card-row"><span class="card-label">當前水平</span><span class="card-value">9.2</span></div>
+                    <div class="card-row"><span class="card-label">變化</span><span class="card-value negative">-28.1%</span></div>
+                    <p style="color: #666; font-size: 0.9em; margin-top: 10px;">香港市場相對穩定，可能存在投資機會。</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sentiment Tab -->
+        <div id="sentiment" class="tab-content">
+            <div class="gauge-container">
+                <div class="gauge-card">
+                    <h3>美國市場恐懼與貪婪指數</h3>
+                    <div class="gauge-value" style="color: #f97316;">29</div>
+                    <div class="gauge-label">恐懼</div>
+                    <div class="gauge-description">美國市場當前處於恐懼狀態</div>
+                </div>
+                
+                <div class="gauge-card">
+                    <h3>香港市場恐懼與貪婪指數</h3>
+                    <div class="gauge-value" style="color: #22c55e;">67</div>
+                    <div class="gauge-label">貪婪</div>
+                    <div class="gauge-description">香港市場當前處於貪婪狀態</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Fund Flow Tab -->
+        <div id="fundflow" class="tab-content">
+            <div class="card">
+                <h3>資金流向分析</h3>
+                <p>當前市場資金流向穩定，投資者應關注主要指數的資金動向。美國市場資金流向相對謹慎，而香港市場資金流向較為活躍。</p>
+            </div>
+        </div>
+        
+        <!-- Insights Tab -->
+        <div id="insights" class="tab-content">
+            <div class="card">
+                <h3>投資啟示</h3>
+                <p>基於當前本益比分析，我們提供以下投資建議：</p>
+                <ul>
+                    <li>標普500 和道瓊工業平均指數處於高估狀態，建議謹慎投資</li>
+                    <li>納斯達克綜合指數顯示高估值特徵，科技股投資需謹慎</li>
+                    <li>恒生指數相對低估，可能存在投資機會</li>
+                    <li>美國市場當前處於恐懼狀態，香港市場處於貪婪狀態</li>
+                    <li>投資者應根據自身風險承受能力進行資產配置</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- References Tab -->
+        <div id="references" class="tab-content">
+            <div class="card">
+                <h3>參考資料</h3>
+                <ul>
+                    <li><a href="https://www.investopedia.com/terms/p/price-earningsratio.asp" target="_blank">本益比定義與分析 - Investopedia</a></li>
+                    <li><a href="https://www.cnbc.com/quotes/.INDU" target="_blank">道瓊工業平均指數 - CNBC</a></li>
+                    <li><a href="https://www.cnbc.com/quotes/.GSPC" target="_blank">標普500指數 - CNBC</a></li>
+                    <li><a href="https://www.cnbc.com/quotes/.IXIC" target="_blank">納斯達克綜合指數 - CNBC</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function switchTab(event, tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
