@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>終極本益比分析平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .theme-toggle {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .theme-toggle:hover {
+            background: #764ba2;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #ddd;
+        }
+
+        body.dark-mode .tabs {
+            border-bottom-color: #444;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 1em;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            color: #666;
+        }
+
+        body.dark-mode .tab-btn {
+            color: #999;
+        }
+
+        .tab-btn:hover {
+            color: #667eea;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        body.dark-mode .card {
+            background: #2a2a2a;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        body.dark-mode .card h2 {
+            color: #8b9eff;
+        }
+
+        .card h3 {
+            margin-top: 15px;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        body.dark-mode .card h3 {
+            color: #bbb;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .summary-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+
+        body.dark-mode .summary-item {
+            background: #333;
+            border-left-color: #8b9eff;
+        }
+
+        .summary-label {
+            font-size: 0.9em;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .summary-value {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        body.dark-mode .summary-value {
+            color: #8b9eff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th {
+            background: #f0f0f0;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #ddd;
+        }
+
+        body.dark-mode th {
+            background: #333;
+            border-bottom-color: #555;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        body.dark-mode td {
+            border-bottom-color: #444;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        body.dark-mode tr:hover {
+            background: #333;
+        }
+
+        .positive {
+            color: #27ae60;
+        }
+
+        .negative {
+            color: #e74c3c;
+        }
+
+        .neutral {
+            color: #999;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            margin-top: 40px;
+            border-top: 1px solid #ddd;
+        }
+
+        body.dark-mode footer {
+            border-top-color: #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>終極本益比分析平台</h1>
+            <p class="subtitle">Ultimate P/E Ratio Analysis Platform</p>
+        </header>
+
+        <div class="controls">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab(event, 'dashboard')">📊 儀表板</button>
+                <button class="tab-btn" onclick="switchTab(event, 'berkshire')">🐦 伯克希爾 13F</button>
+                <button class="tab-btn" onclick="switchTab(event, 'multifund')">📊 多基金對比</button>
+                <button class="tab-btn" onclick="switchTab(event, 'consensus')">🎯 機構共識</button>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()">🌙 深色模式</button>
+        </div>
+
+        <!-- 儀表板標籤 -->
+        <div id="dashboard" class="tab-content active">
+            <div class="card">
+                <h2>📊 市場概覽</h2>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <div class="summary-label">S&P 500 P/E</div>
+                        <div class="summary-value">22.5</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">納斯達克 P/E</div>
+                        <div class="summary-value">28.3</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">恒生指數 P/E</div>
+                        <div class="summary-value">10.2</div>
+                    </div>
+                </div>
+                <p>市場估值概覽，幫助投資者了解當前市場狀況。</p>
+            </div>
+        </div>
+
+        <!-- 伯克希爾 13F 標籤 -->
+        <div id="berkshire" class="tab-content">
+            <div class="card">
+                <h2>🐦 伯克希爾·哈撒韋 (BRK.B) 13F 持倉分析</h2>
+                
+                <h3>持倉摘要</h3>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <div class="summary-label">總持倉市值</div>
+                        <div class="summary-value">$422.3B</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">現金及等價物</div>
+                        <div class="summary-value">$167.6B</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">現金占比</div>
+                        <div class="summary-value">39.7%</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">前10大占比</div>
+                        <div class="summary-value">95.1%</div>
+                    </div>
+                </div>
+
+                <h3>前 10 大持倉</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>股票代碼</th>
+                            <th>公司名稱</th>
+                            <th>市值 (B$)</th>
+                            <th>占比</th>
+                            <th>Q2 變化</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>AAPL</td>
+                            <td>Apple Inc.</td>
+                            <td>246.5</td>
+                            <td>58.3%</td>
+                            <td class="negative">-13.2%</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>BAC</td>
+                            <td>Bank of America</td>
+                            <td>54.8</td>
+                            <td>13.0%</td>
+                            <td class="negative">-5.6%</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>KO</td>
+                            <td>Coca-Cola</td>
+                            <td>26.4</td>
+                            <td>6.3%</td>
+                            <td class="neutral">0%</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>AXP</td>
+                            <td>American Express</td>
+                            <td>32.1</td>
+                            <td>7.6%</td>
+                            <td class="positive">+4.2%</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>CVX</td>
+                            <td>Chevron</td>
+                            <td>24.7</td>
+                            <td>5.9%</td>
+                            <td class="negative">-8.9%</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>OXY</td>
+                            <td>Occidental Petroleum</td>
+                            <td>18.3</td>
+                            <td>4.3%</td>
+                            <td class="negative">-12.5%</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>VRSN</td>
+                            <td>VeriSign Inc.</td>
+                            <td>12.5</td>
+                            <td>3.0%</td>
+                            <td class="positive">+12.5%</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>BNY</td>
+                            <td>BNY Mellon</td>
+                            <td>10.8</td>
+                            <td>2.6%</td>
+                            <td class="positive">+6.7%</td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>PG</td>
+                            <td>Procter & Gamble</td>
+                            <td>8.9</td>
+                            <td>2.1%</td>
+                            <td class="neutral">0%</td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>JNJ</td>
+                            <td>Johnson & Johnson</td>
+                            <td>7.3</td>
+                            <td>1.7%</td>
+                            <td class="neutral">0%</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>主要觀察</h3>
+                <ul style="margin-left: 20px; line-height: 1.8;">
+                    <li><strong>AAPL 大幅減持</strong>：從 Q1 的 58.3% 減至當前，反映對科技股估值的謹慎態度</li>
+                    <li><strong>金融股穩定</strong>：BAC 和 AXP 保持穩定，顯示對金融行業的信心</li>
+                    <li><strong>現金儲備</strong>：39.7% 的現金占比創歷史新高，表明在等待投資機會</li>
+                    <li><strong>增持股票</strong>：VRSN 和 BNY 的增持表明對特定公司的看好</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 多基金對比標籤 -->
+        <div id="multifund" class="tab-content">
+            <div class="card">
+                <h2>📊 多基金對比分析</h2>
+                
+                <h3>基金特徵對比</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>特徵</th>
+                            <th>伯克希爾 (BRK.B)</th>
+                            <th>先鋒 500 (VOO)</th>
+                            <th>索羅斯基金</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>投資風格</strong></td>
+                            <td>價值投資</td>
+                            <td>被動指數</td>
+                            <td>宏觀對沖</td>
+                        </tr>
+                        <tr>
+                            <td><strong>總持倉市值</strong></td>
+                            <td>$422.3B</td>
+                            <td>$750.2B</td>
+                            <td>$32.8B</td>
+                        </tr>
+                        <tr>
+                            <td><strong>現金占比</strong></td>
+                            <td>39.7%</td>
+                            <td>0.5%</td>
+                            <td>15.2%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>科技股占比</strong></td>
+                            <td>59.3%</td>
+                            <td>28.5%</td>
+                            <td>78.1%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>集中度</strong></td>
+                            <td>高（前10大占95%）</td>
+                            <td>低（分散投資）</td>
+                            <td>高（前5大占78%）</td>
+                        </tr>
+                        <tr>
+                            <td><strong>投資策略</strong></td>
+                            <td>精選個股</td>
+                            <td>跟蹤指數</td>
+                            <td>主動管理</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>前 5 大持倉對比</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>伯克希爾</th>
+                            <th>先鋒</th>
+                            <th>索羅斯</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>AAPL (58.3%)</td>
+                            <td>AAPL (42.6%)</td>
+                            <td>GOOGL (25.0%)</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>BAC (13.0%)</td>
+                            <td>MSFT (41.3%)</td>
+                            <td>AMZN (15.5%)</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>KO (6.3%)</td>
+                            <td>NVDA (37.3%)</td>
+                            <td>MSFT (11.6%)</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>AXP (7.6%)</td>
+                            <td>GOOGL (24.0%)</td>
+                            <td>TSLA (7.6%)</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>CVX (5.9%)</td>
+                            <td>AMZN (20.0%)</td>
+                            <td>META (6.4%)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>投資洞察</h3>
+                <ul style="margin-left: 20px; line-height: 1.8;">
+                    <li><strong>AAPL 共識</strong>：伯克希爾和先鋒都大幅持有，機構投資者廣泛看好</li>
+                    <li><strong>科技股差異</strong>：索羅斯最激進（78.1%），伯克希爾最保守（59.3%），先鋒最平衡（28.5%）</li>
+                    <li><strong>Google 分歧</strong>：索羅斯大幅增持（25%），但伯克希爾已完全清倉</li>
+                    <li><strong>現金策略</strong>：伯克希爾現金占比最高（39.7%），表明在等待投資機會</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 機構共識標籤 -->
+        <div id="consensus" class="tab-content">
+            <div class="card">
+                <h2>🎯 機構共識分析</h2>
+                
+                <h3>共同持倉（三基金都持有）</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>股票</th>
+                            <th>伯克希爾</th>
+                            <th>先鋒</th>
+                            <th>索羅斯</th>
+                            <th>共識強度</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>AAPL</strong></td>
+                            <td>58.3%</td>
+                            <td>42.6%</td>
+                            <td>-</td>
+                            <td class="positive">強</td>
+                        </tr>
+                        <tr>
+                            <td><strong>MSFT</strong></td>
+                            <td>-</td>
+                            <td>41.3%</td>
+                            <td>11.6%</td>
+                            <td class="positive">強</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GOOGL</strong></td>
+                            <td>-</td>
+                            <td>24.0%</td>
+                            <td>25.0%</td>
+                            <td class="positive">中</td>
+                        </tr>
+                        <tr>
+                            <td><strong>AMZN</strong></td>
+                            <td>-</td>
+                            <td>20.0%</td>
+                            <td>15.5%</td>
+                            <td class="positive">中</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>分歧持倉（投資者看法不同）</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>股票</th>
+                            <th>持有者</th>
+                            <th>占比</th>
+                            <th>投資邏輯</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>GOOGL</strong></td>
+                            <td>索羅斯 ✅<br>伯克希爾 ❌</td>
+                            <td>25.0%<br>0%</td>
+                            <td>索羅斯看好AI，伯克希爾謹慎</td>
+                        </tr>
+                        <tr>
+                            <td><strong>BAC</strong></td>
+                            <td>伯克希爾 ✅<br>其他 ❌</td>
+                            <td>13.0%<br>-</td>
+                            <td>伯克希爾看好金融股</td>
+                        </tr>
+                        <tr>
+                            <td><strong>NVDA</strong></td>
+                            <td>先鋒 ✅<br>伯克希爾 ❌</td>
+                            <td>37.3%<br>0%</td>
+                            <td>先鋒跟蹤指數，伯克希爾保持距離</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>關鍵洞察</h3>
+                <ul style="margin-left: 20px; line-height: 1.8;">
+                    <li><strong>AAPL 強共識</strong>：伯克希爾和先鋒都大幅持有，機構投資者廣泛看好</li>
+                    <li><strong>Google 分歧大</strong>：索羅斯大幅增持（25%），但伯克希爾已完全清倉，反映不同的科技股看法</li>
+                    <li><strong>科技股差異</strong>：索羅斯最激進（78.1%），伯克希爾最保守（59.3%），先鋒最平衡（28.5%）</li>
+                    <li><strong>現金策略</strong>：伯克希爾現金占比最高（39.7%），表明在等待投資機會</li>
+                    <li><strong>金融股信心</strong>：伯克希爾對金融股（BAC、AXP）保持信心，其他基金相對保守</li>
+                </ul>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2025 終極本益比分析平台 | 數據來源：SEC EDGAR | 最後更新：2025-11-24</p>
+        </footer>
+    </div>
+
+    <script>
+        let isDarkMode = localStorage.getItem('darkMode') === 'true';
+
+        // 初始化深色模式
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+        }
+
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode);
+        }
+
+        function switchTab(event, tabName) {
+            // 隱藏所有標籤內容
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // 移除所有按鈕的 active 類
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // 顯示選中的標籤內容
+            const selectedContent = document.getElementById(tabName);
+            if (selectedContent) {
+                selectedContent.classList.add('active');
+            }
+
+            // 添加 active 類到點擊的按鈕
+            event.target.classList.add('active');
+
+            // 加載 13F 數據（如果有的話）
+            if (['berkshire', 'multifund', 'consensus'].includes(tabName)) {
+                load13FData(tabName);
+            }
+        }
+
+        function load13FData(tabName) {
+            // 嘗試從 13f-data.json 加載數據
+            fetch('13f-data.json')
+                .then(response => {
+                    if (!response.ok) {
+                        console.log('13f-data.json not found, using static data');
+                        return null;
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data) {
+                        console.log('13F data loaded successfully:', data);
+                    }
+                })
+                .catch(error => {
+                    console.log('Could not load 13f-data.json:', error);
+                });
+        }
+
+        // 頁面加載完成時的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded, 13F tabs are ready');
+        });
+    </script>
+</body>
+</html>
